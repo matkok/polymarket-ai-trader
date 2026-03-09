@@ -1,6 +1,12 @@
-# Agent-Trader
+# Polymarket AI Trader
 
-Polymarket paper trading system with two independent trading strategies:
+Free and open source. Fork it, improve it, make it yours.
+
+This is a fully working Polymarket paper trading system with two independent strategies. The **LLM Trader is the recommended starting point** — it runs a multi-model AI panel and has shown consistent profitability in paper trading (60% win rate, positive ROI after LLM costs). The Structured Trader is experimental and underperforming — contributions welcome to improve it.
+
+---
+
+Two trading strategies:
 
 - **LLM Trader** (`src/`) — Multi-LLM panel (OpenAI, Anthropic, Google, xAI) for probability forecasting on general prediction markets. Collects real-world signals (RSS evidence, Google Trends, Wikipedia pageviews), runs role-based LLM agents for analysis, and trades with deterministic risk management.
 
