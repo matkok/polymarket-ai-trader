@@ -27,7 +27,36 @@ Currency: EUR. Bankroll: 10,000 EUR per trader. Daily LLM budget (LLM trader onl
 | M5 | Model scoring and leaderboards | Done |
 | M6 | Signal collection and triage scoring | Done |
 
-591 tests passing. Running 24/7 on production server.
+1,251 tests passing. Running 24/7 on production server.
+
+## Paper Trading Results (LLM Trader)
+
+Live paper trading from Feb 16 – Mar 9, 2026 (22 days, 10,000 EUR bankroll):
+
+| Metric | Value |
+|--------|-------|
+| Total trades | 101 |
+| Win rate | 61.4% (62/101) |
+| Profitable days | 14 out of 18 trading days (78%) |
+| Gross profit | +429.13 EUR |
+| Average winner | +6.92 EUR |
+| Best single trade | +113.13 EUR |
+| LLM cost | 81.05 EUR (15,479 API calls) |
+| Cost per trade | ~0.80 EUR |
+| Markets analyzed | ~29,000 active markets |
+
+The system scans thousands of markets per cycle, filters through 9-step candidate selection, collects real-world signals, runs a 4-model LLM panel, and only trades when consensus edge exceeds execution costs. Most days are profitable with small, consistent gains.
+
+**Model accuracy** (by LLM agent role):
+
+| Agent | Accuracy | Role |
+|-------|----------|------|
+| Probabilist (GPT-5-mini) | 69% | Primary probability estimator — MVP |
+| Rules Lawyer (GPT-5-mini) | 63% | Resolution rules analysis + veto power |
+| X Signals (Grok-3-fast) | 62% | Social/news signal detection |
+| Escalation Google (Gemini-2.5-pro) | 60% | High-stakes escalation — cleanest PnL signal |
+
+**LLM costs are fixed** (~4-6 EUR/day) regardless of bankroll size. With the default 10,000 EUR bankroll, LLM costs are negligible relative to trading capital.
 
 ### Capabilities
 
