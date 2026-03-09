@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-agent_trader_structured}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-agent_trader_structured}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata_structured:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agent_trader_structured}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-agent_trader_structured}:${POSTGRES_PASSWORD:-devpassword}@postgres:5432/${POSTGRES_DB:-agent_trader_structured}
+    volumes:
+      - ./src:/app/src
+      - ./policy.yaml:/app/policy.yaml:ro
+
+volumes:
+  pgdata_structured:

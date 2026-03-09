@@ -1,0 +1,221 @@
+# =============================================================================
+# Agent-Trader Policy — Deterministic Portfolio & Risk Limits
+# =============================================================================
+# This file is versioned in git.  A SHA-256 hash of its canonical JSON
+# representation is stored with every trading decision for reproducibility.
+# All monetary values are in EUR.  Fractions are relative to bankroll_eur.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Capital
+# ---------------------------------------------------------------------------
+bankroll_eur: 10000.0
+
+# Minimum cash reserve as a fraction of bankroll.
+cash_reserve_target_frac: 0.20
+
+# Maximum total exposure across all open positions.
+max_total_exposure_frac: 0.60
+
+# Maximum exposure in any single market.
+max_exposure_per_market_frac: 0.08
+
+# Hard cap on the number of simultaneously open positions.
+max_open_positions: 20
+
+# If cumulative daily realised loss exceeds this fraction, halt new entries.
+max_daily_loss_frac: 0.05
+
+# If daily realised + unrealised drawdown exceeds this fraction, halt new entries.
+max_daily_drawdown_frac: 0.08
+
+# Minimum market liquidity (EUR) required to consider a trade.
+min_liquidity_eur: 2000.0
+
+# ---------------------------------------------------------------------------
+# Edge & Sizing
+# ---------------------------------------------------------------------------
+
+# Minimum absolute edge (|p_consensus - p_market|) to enter a trade.
+edge_threshold: 0.06
+
+# Base risk fraction of bankroll before edge scaling.
+base_risk_frac: 0.02
+
+# Edge scaling divisor: size *= abs(edge) / edge_scale.
+edge_scale: 0.20
+
+# ---------------------------------------------------------------------------
+# Confidence Gate
+# ---------------------------------------------------------------------------
+
+# Hard block: trades with confidence below this are forbidden.
+min_confidence_hard: 0.25
+
+# Full size: confidence at or above this gets effective_conf = 1.0.
+# Between hard and full, effective_conf ramps linearly from 0 to 1.
+min_confidence_full: 0.60
+
+# ---------------------------------------------------------------------------
+# Entry Price Filter
+# ---------------------------------------------------------------------------
+
+# Block trades where entry price exceeds this (unless massive edge override).
+max_entry_price: 0.90
+
+# ---------------------------------------------------------------------------
+# Disagreement
+# ---------------------------------------------------------------------------
+
+# If panel disagreement (std dev of p_true) >= this, block the trade.
+disagreement_block_threshold: 0.15
+
+# Start applying a size penalty when disagreement exceeds this level.
+disagreement_size_penalty_start: 0.08
+
+# ---------------------------------------------------------------------------
+# Ambiguity
+# ---------------------------------------------------------------------------
+
+# If N models' ambiguity_score >= this threshold, veto the trade.
+ambiguity_veto_threshold: 0.85
+
+# Number of models required to agree on veto (quorum).
+veto_quorum: 2
+
+# ---------------------------------------------------------------------------
+# Position Reentry Cooldown
+# ---------------------------------------------------------------------------
+
+# Hours after last order before re-entering a previously-traded market.
+# Requires stability (same side, increasing edge, higher confidence, lower disagreement).
+position_reentry_cooldown_hours: 6
+
+# ---------------------------------------------------------------------------
+# Position Stability
+# ---------------------------------------------------------------------------
+
+# Minimum minutes a position must be held before aggregation-based exits.
+min_hold_minutes: 60
+
+# Number of consecutive veto cycles required to close a position.
+veto_exit_consecutive_required: 2
+
+# Block new entry if this market had a veto within N minutes.
+no_add_if_recent_veto_minutes: 120
+
+# ---------------------------------------------------------------------------
+# Recheck Triggers
+# ---------------------------------------------------------------------------
+
+# Re-run panel if odds moved by at least this amount since last run.
+odds_move_recheck_threshold: 0.05
+
+# Re-run panel if new evidence appeared within this window (minutes).
+new_evidence_recheck_window_minutes: 120
+
+# ---------------------------------------------------------------------------
+# Cycle Limits
+# ---------------------------------------------------------------------------
+
+# Maximum candidate markets evaluated per scheduling cycle.
+max_candidates_per_cycle: 20
+
+# Maximum markets sent through the full LLM panel per day.
+max_panel_markets_per_day: 60
+
+# ---------------------------------------------------------------------------
+# Position Review (M4)
+# ---------------------------------------------------------------------------
+
+# Fraction of position to exit on a REDUCE action.
+reduce_fraction: 0.50
+
+# Minimum position size in EUR; below this, REDUCE becomes CLOSE.
+dust_position_eur: 1.0
+
+# Close when |p_market - p_consensus| < this band and confidence dropped.
+take_profit_band: 0.02
+
+# Confidence must drop by at least this much (vs prior aggregation) for take-profit.
+confidence_drop_threshold: 0.15
+
+# ---------------------------------------------------------------------------
+# Execution
+# ---------------------------------------------------------------------------
+
+# Simulated slippage in basis points applied to paper fills.
+slippage_bps: 50
+
+# Fee rate applied to each simulated fill (0.0 for standard Polymarket).
+fee_rate: 0.0
+
+# Fee rate for 15-minute crypto markets (which still charge fees).
+crypto_15min_fee_rate: 0.02
+
+# ---------------------------------------------------------------------------
+# Market Filters
+# ---------------------------------------------------------------------------
+
+# Minimum 24-hour volume (EUR) for a market to be considered.
+min_volume: 5000.0
+
+# Minimum hours until resolution — avoid last-minute markets.
+min_hours_to_resolution: 24
+
+# Maximum hours until resolution — avoid very long-dated markets (90 days).
+max_hours_to_resolution: 2160
+
+# Minimum rules_text length to consider a market (prevents ambiguity churn).
+min_rules_text_length: 50
+
+# ---------------------------------------------------------------------------
+# Evidence & Packets
+# ---------------------------------------------------------------------------
+
+# Maximum evidence items included per packet sent to LLM panel.
+max_evidence_items_per_packet: 10
+
+# Truncate evidence excerpts to this many characters.
+evidence_excerpt_max_chars: 500
+
+# ---------------------------------------------------------------------------
+# LLM Token Limits
+# ---------------------------------------------------------------------------
+
+# Maximum input tokens per LLM call.
+max_input_tokens_per_call: 4000
+
+# Maximum output tokens per LLM call.
+max_output_tokens_per_call: 1000
+
+# ---------------------------------------------------------------------------
+# Triage (Signal-based pre-filtering)
+# ---------------------------------------------------------------------------
+
+# Minimum triage score to send a candidate to the LLM panel.
+triage_panel_threshold: 0.40
+
+# Odds move (6h) threshold for triage scoring normalisation.
+triage_odds_move_threshold: 0.08
+
+# Volume surge ratio threshold (current/avg) for triage scoring.
+triage_volume_surge_threshold: 1.5
+
+# Google Trends spike score threshold for triage scoring.
+triage_trends_spike_threshold: 2.0
+
+# Wikipedia spike score threshold for triage scoring.
+triage_wiki_spike_threshold: 2.0
+
+# Maximum spread allowed — wider spreads penalise the triage score.
+triage_max_spread: 0.10
+
+# Spread threshold for the wide_spread guardrail (reduces size by 50%).
+triage_wide_spread_threshold: 0.08
+
+# Spread widening ratio threshold for the spread_widening guardrail.
+triage_spread_widening_threshold: 2.0
+
+# Maximum markets to compute signals for per cycle.
+triage_max_markets_for_signals: 200

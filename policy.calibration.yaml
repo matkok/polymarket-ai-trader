@@ -1,0 +1,104 @@
+# =============================================================================
+# Agent-Trader Calibration Policy — Conservative Profile
+# =============================================================================
+# Use this profile during the calibration phase to limit risk exposure
+# while evaluating whether the system has genuine edge.  Once calibration
+# confirms positive edge, switch to the standard policy.yaml.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Capital (conservative)
+# ---------------------------------------------------------------------------
+bankroll_eur: 10000.0
+cash_reserve_target_frac: 0.30
+max_total_exposure_frac: 0.40
+max_exposure_per_market_frac: 0.05
+max_open_positions: 10
+max_daily_loss_frac: 0.03
+max_daily_drawdown_frac: 0.05
+min_liquidity_eur: 10000.0
+
+# ---------------------------------------------------------------------------
+# Edge & Sizing (tighter thresholds)
+# ---------------------------------------------------------------------------
+edge_threshold: 0.07
+base_risk_frac: 0.005
+edge_scale: 0.20
+
+# ---------------------------------------------------------------------------
+# Disagreement (stricter)
+# ---------------------------------------------------------------------------
+disagreement_block_threshold: 0.12
+disagreement_size_penalty_start: 0.06
+
+# ---------------------------------------------------------------------------
+# Ambiguity
+# ---------------------------------------------------------------------------
+ambiguity_veto_threshold: 0.80
+veto_quorum: 2
+
+# ---------------------------------------------------------------------------
+# Position Stability
+# ---------------------------------------------------------------------------
+min_hold_minutes: 90
+veto_exit_consecutive_required: 2
+no_add_if_recent_veto_minutes: 180
+
+# ---------------------------------------------------------------------------
+# Recheck Triggers
+# ---------------------------------------------------------------------------
+odds_move_recheck_threshold: 0.05
+new_evidence_recheck_window_minutes: 120
+
+# ---------------------------------------------------------------------------
+# Cycle Limits
+# ---------------------------------------------------------------------------
+max_candidates_per_cycle: 5
+max_panel_markets_per_day: 10
+
+# ---------------------------------------------------------------------------
+# Position Review (M4)
+# ---------------------------------------------------------------------------
+reduce_fraction: 0.50
+take_profit_band: 0.02
+confidence_drop_threshold: 0.15
+
+# ---------------------------------------------------------------------------
+# Execution
+# ---------------------------------------------------------------------------
+slippage_bps: 50
+fee_rate: 0.0
+crypto_15min_fee_rate: 0.02
+
+# ---------------------------------------------------------------------------
+# Market Filters (stricter)
+# ---------------------------------------------------------------------------
+min_volume: 20000.0
+min_hours_to_resolution: 48
+max_hours_to_resolution: 1440
+
+# ---------------------------------------------------------------------------
+# Evidence & Packets
+# ---------------------------------------------------------------------------
+max_evidence_items_per_packet: 10
+evidence_excerpt_max_chars: 500
+evidence_similarity_threshold: 0.35
+
+# ---------------------------------------------------------------------------
+# LLM Token Limits
+# ---------------------------------------------------------------------------
+max_input_tokens_per_call: 4000
+max_output_tokens_per_call: 1000
+
+# ---------------------------------------------------------------------------
+# Triage
+# ---------------------------------------------------------------------------
+triage_panel_threshold: 0.35
+triage_odds_move_threshold: 0.08
+triage_volume_surge_threshold: 1.5
+triage_trends_spike_threshold: 2.0
+triage_wiki_spike_threshold: 2.0
+triage_max_spread: 0.08
+triage_wide_spread_threshold: 0.06
+triage_spread_widening_threshold: 2.0
+triage_max_markets_for_signals: 50
